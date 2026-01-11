@@ -1,22 +1,22 @@
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-python-dotenv==1.0.0
-python-multipart==0.0.6
-pydantic[email]==2.5.3
-email-validator==2.1.0
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+python-dotenv==1.0.1
+python-multipart==0.0.12
+pydantic[email]==2.10.3
+email-validator==2.2.0
 
 # Database
-mysql-connector-python==8.3.0
+mysql-connector-python==9.1.0
 
 # Authentication & Security
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
-bcrypt==4.1.2
+bcrypt==4.2.1
 
 # AI & Document Processing
-groq==0.4.2
-pdfminer.six==20221105
-python-docx==1.1.0
+groq==0.13.0
+pdfminer.six==20231228
+python-docx==1.1.2
 
 # Utilities
-requests==2.31.0
+requests==2.32.3
