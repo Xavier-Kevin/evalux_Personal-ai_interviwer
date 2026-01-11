@@ -8,3 +8,4 @@ python-multipart
 jinja2
 sqlalchemy
 email-validator
+passlib[bcrypt]
