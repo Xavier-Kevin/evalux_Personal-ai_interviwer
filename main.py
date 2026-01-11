@@ -2,6 +2,8 @@
 EVALUX Backend API
 """
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr
@@ -46,6 +48,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Serve index.html at root
+@app.get("/", response_class=FileResponse)
+async def serve_frontend():
+    return FileResponse('static/index.html')
+
+# In-memory storage for OTP and sessions
+otp_storage = {}
+interview_sessions = {}
 
 # In-memory storage for OTP and sessions
 otp_storage = {}
@@ -1598,4 +1610,5 @@ async def check_admin(current_user: dict = Depends(get_current_user)):
 if __name__ == "__main__":
     import uvicorn
     logger.info("🚀 Starting EVALUX Backend (NO-INPUT VERSION)...")   
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
