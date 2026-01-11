@@ -9,7 +9,31 @@ window.addEventListener('unhandledrejection', function(e) {
 // ==============================================
 // NEW API CLIENT (for interview.html)
 // ==============================================
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = 'https://your-app-name.onrender.com';
+```
+
+#### **2. Check all HTML files:**
+
+Look in files like:
+- `static/index.html`
+- `static/admin.html`
+- `static/dashboard.html`
+- `static/code.html`
+- `static/interview.html`
+
+Search for `localhost:8000` and replace with your Render URL.
+
+---
+
+## 🌐 Step 4: Set Up Frontend Hosting
+
+You have two options:
+
+### **Option A: Serve Frontend from FastAPI (Easiest)**
+
+Your `main.py` already has code to serve static files! Just visit:
+```
+https://your-app-name.onrender.com/
 
 const App = {
   async startInterview(topic = 'Software Development', cvSkills = []) {
@@ -386,4 +410,5 @@ class EvaluxApp {
 document.addEventListener('DOMContentLoaded', () => {
   window.evaluxApp = new EvaluxApp();
   console.log('✅ App.js loaded - API endpoints configured');
+
 });
