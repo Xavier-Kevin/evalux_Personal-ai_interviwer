@@ -1,0 +1,237 @@
+<!--EVALUX Landing Page-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EVALUX — Practice Interviews</title>
+  <meta name="description" content="Practice interviews, improve answers, track progress with EVALUX" />
+
+  <!-- Inline CSS for page styling -->
+  <style>
+    body {
+  margin: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      background: #181f36;
+      color: #e2e8f0;
+    }
+    .header {
+      background: #131d2f;
+      border-bottom: 1px solid #232a45;
+      padding: 0.5rem 0;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      font-size: 2rem;
+      color: #36f3e2;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .nav-menu {
+      float: right;
+      margin-top: -2.2rem;
+    }
+    .btn, .btn-primary, .btn-secondary, .btn-success {
+      display: inline-block;
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin: 0.2rem;
+      transition: background 0.2s, color 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg,#36f3e2,#3a8fff);
+      color: #181f36;
+      box-shadow: 0 2px 8px rgba(54,243,226,0.08);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: #36f3e2;
+      border: 2px solid #36f3e2;
+    }
+    .btn-success {
+      background: linear-gradient(90deg,#36f3e2,#3affb3);
+      color: #181f36;
+      border: none;
+    }
+    .hero {
+      padding: 5rem 0 2rem 0;
+      text-align: center;
+    }
+    .hero-title {
+      font-size: 2.7rem;
+      font-weight: 800;
+      color: #36f3e2;
+      margin-bottom: 1.2rem;
+    }
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: #b3b9c9;
+      margin-bottom: 2.5rem;
+    }
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .features {
+      margin: 3rem auto 0 auto;
+      text-align: center;
+    }
+    .features-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #36f3e2;
+      margin-bottom: 2rem;
+    }
+    .features-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+    .feature-card {
+      background: #232a45;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      padding: 2rem 1.5rem;
+      min-width: 220px;
+      max-width: 260px;
+      text-align: center;
+      color: #fff;
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .app-footer {
+      background: #131d2f;
+      color: #36f3e2;
+      padding: 2rem 0 1rem 0;
+      margin-top: 3rem;
+    }
+    .footer-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .footer-brand {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .footer-tagline {
+      color: #b3b9c9;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+    .footer-nav {
+      display: flex;
+      gap: 2rem;
+    }
+    .footer-nav a {
+      color: #36f3e2;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover {
+      color: #3affb3;
+    }
+    .footer-social a {
+      font-size: 1.5rem;
+      color: #36f3e2;
+      text-decoration: none;
+      margin-left: 1rem;
+    }
+    .footer-bottom {
+      text-align: center;
+      color: #b3b9c9;
+      margin-top: 1rem;
+    }
+    @media (max-width: 700px) {
+      .features-grid {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .footer-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header: Site branding -->
+  <header class="header">
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+      <div class="nav-brand" style="flex:1;">
+        <span class="brand-text" style="background: linear-gradient(90deg, #3a8fff,#36f3e2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-fill-color: transparent;"><b>EVALUX</b></span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section: Main call to action -->
+    <section class="hero">
+      <div class="container hero-container">
+        <div class="hero-content">
+          <h1 class="hero-title">Master Your Interview Skills</h1>
+          <p class="hero-subtitle">Level up your interview game with Evalux — your personal AI-powered interview coach. Practice anytime, get instant insights on your answers, and see your progress in real time. With Evalux, you don’t just prepare for interviews — you master them.</p>
+          <p class="hero-subtitle">Whether you’re a student preparing for your first interview, a professional aiming for your next career leap, or someone simply looking to improve communication — Evalux is your personal coach, available anytime.</p>
+          <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center;">
+
+            <!-- Get Started button for new users -->
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span style="color:#36f3e2; font-weight:500; font-size:1rem;">NEW HERE,</span>
+              <a href="profile.html" class="btn btn-success">Get Started</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section: Highlights platform features -->
+    <section class="features">
+      <div class="container">
+        <h2 class="features-title">Why Choose EVALUX?</h2>
+        <div class="features-grid">
+          <div class="feature-card"><span class="feature-icon">🎯</span><h3>AI-Powered Feedback</h3><p>Get instant, personalized feedback on your interview performance.</p></div>
+          <div class="feature-card"><span class="feature-icon">📊</span><h3>Progress Tracking</h3><p>Monitor your improvement over time with detailed analytics.</p></div>
+          <div class="feature-card"><span class="feature-icon">💻</span><h3>Coding Practice</h3><p>Practice with questions tailored to your industry and role.</p></div>
+          <div class="feature-card"><span class="feature-icon">📝</span><h3>Adaptive CV Analysis</h3><p>Upload and get CV based interview questions.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer: Site info and navigation -->
+  <footer class="app-footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <span class="footer-logo">EVALUX</span>
+        <p class="footer-tagline">PREP. SPEAK. PEAK.</p>
+      </div>
+    </div>
+    <div class="footer-bottom"><small>&copy; 2025 EVALUX. All rights reserved.</small></div>
+  </footer>
+
+  
+</body>
+</html>

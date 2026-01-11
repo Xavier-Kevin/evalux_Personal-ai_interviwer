@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — EVALUX</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dark">
+  <!-- CV Suggestion Notification -->
+  <div id="cvSuggestionBox" class="toast info" style="display:none; position:fixed; top:2rem; right:2rem; z-index:1200;">
+    💡 Suggestion: Upload CV for personalised interview sessions
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="brand-text">EVALUX</div>
+      <nav class="nav-menu">
+        <div class="user-info">
+          <span id="userName">Welcome!</span>
+          <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div id="dashboardPage" class="page active">
+      <div class="container">
+        <div class="dashboard-header">
+          <h1>Dashboard</h1>
+          <p class="muted">Choose what you'd like to practice today</p>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Interview Practice Card -->
+          <div class="dashboard-card" id="interviewCard">
+            <h3>🗣️</h3>
+            <h4>Interview Practice</h4>
+            <p>Practice mock interviews and improve your responses</p>
+            <a href="interview.html" class="btn btn-primary">Start Interview</a>
+          </div>
+
+          <!-- Code Practice Card -->
+          <div class="dashboard-card" id="codeCard">
+            <h3>💻</h3>
+            <h4>Code Practice</h4>
+            <p>Solve coding challenges and improve your skills</p>
+            <a href="code.html" class="btn btn-primary">Practice Code</a>
+          </div>
+
+          <!-- CV Analysis Card -->
+          <div class="dashboard-card" id="cvCard">
+            <h3>📄</h3>
+            <h4>CV Analysis</h4>
+            <p>Upload and get feedback on your resume</p>
+            <a href="cv.html" class="btn btn-primary">Upload CV</a>
+          </div>
+
+          <!-- Progress Tracking Card -->
+          <div class="dashboard-card" id="progressCard">
+            <h3>📊</h3>
+            <h4>View Progress</h4>
+            <p>Track your improvement over time</p>
+            <a href="progress.html" class="btn btn-primary">View Stats</a>
+          </div>
+
+          <!-- Progress Tracking Card -->
+          <div class="dashboard-card" id="adminCard" style="display: none;">
+            <h3>🛡️</h3>
+            <h4>Admin</h4>
+            <p>Track webiste activity</p>
+            <a href="admin.html" class="btn btn-primary">View Stats</a>
+          </div>
+      </div>
+        </div>
+      </div>
+    </div>  
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="footer-logo">EVALUX</div>
+        <div class="footer-tagline">Elevate Your Interview Skills</div>
+      </div>
+      <nav class="footer-nav">
+        <a href="interview.html">Interview</a>
+        <a href="code.html">Code Practice</a>
+        <a href="progress.html">Progress</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <small>&copy; 2025 EVALUX. All rights reserved.</small>
+    </div>
+  </footer>
+
+  <!-- Logout Confirmation Modal -->
+  <div id="logoutModal" class="elegant-alert-backdrop">
+    <div class="elegant-alert">
+      <div class="icon">⚠️</div>
+      <div class="body">
+        <div class="title">Confirm Logout</div>
+        <div class="message">Are you sure you want to log out?</div>
+        <div class="actions">
+          <button class="btn btn-primary" id="confirmLogoutBtn">Yes, Logout</button>
+          <button class="btn btn-ghost" id="cancelLogoutBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+ 
+    // ===== CV Suggestion Box =====
+    document.addEventListener('DOMContentLoaded', function() {
+      const cvBox = document.getElementById('cvSuggestionBox');
+      
+      // Show CV suggestion only on first dashboard visit per session
+      if (cvBox && !sessionStorage.getItem('dashboardSuggestionShown')) {
+        cvBox.style.display = 'block';
+        setTimeout(() => {
+          cvBox.style.opacity = '0';
+          setTimeout(() => { 
+            cvBox.style.display = 'none'; 
+          }, 300);
+        }, 5000);
+        sessionStorage.setItem('dashboardSuggestionShown', '1');
+      }
+
+      // ===== User Authentication Check =====
+      const token = localStorage.getItem('evalux_token');
+      const userNameSpan = document.getElementById('userName');
+      
+      if (token && userNameSpan) {
+        // Fetch user info from backend
+        fetch('http://127.0.0.1:8000/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.username) {
+            userNameSpan.textContent = `Welcome, ${data.username}!`;
+          }
+        })
+        .catch(err => {
+          console.error('Failed to fetch user info:', err);
+          userNameSpan.textContent = 'Welcome!';
+        });
+      }
+
+      // ===== Logout Modal Handler =====
+      const logoutBtn = document.getElementById('logoutBtn');
+      const logoutModal = document.getElementById('logoutModal');
+      const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+      const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+
+      // Show logout modal
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          logoutModal.classList.add('show');
+        });
+      }
+
+      // Confirm logout
+      if (confirmLogoutBtn) {
+        confirmLogoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('evalux_token');
+          
+          // Show success message
+          logoutModal.querySelector('.elegant-alert').innerHTML = `
+            <div class="icon">✅</div>
+            <div class="body">
+              <div class="title">Logged Out Successfully</div>
+              <div class="message">Redirecting to home page...</div>
+            </div>
+          `;
+          
+          // Redirect after 1.5 seconds
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+        });
+      }
+
+      // Cancel logout
+      if (cancelLogoutBtn) {
+        cancelLogoutBtn.addEventListener('click', () => {
+          logoutModal.classList.remove('show');
+        });
+      }
+
+      // Close modal on backdrop click
+      logoutModal.addEventListener('click', (e) => {
+        if (e.target === logoutModal) {
+          logoutModal.classList.remove('show');
+        }
+      });
+    });
+
+    // Check if user is admin and show admin card if true
+    async function checkAdminAccess() {
+        const token = localStorage.getItem('evalux_token');
+        if (!token) return;
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/admin/check', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.is_admin) {
+                    document.getElementById('adminCard').style.display = 'block';
+                    console.log('✅ Admin access granted');
+                }
+            }
+        } catch (error) {
+            console.log('Not admin or check failed');
+        }
+    }
+
+    // Run check when page loads
+    document.addEventListener('DOMContentLoaded', checkAdminAccess);
+</script>
+</body>
+</html>

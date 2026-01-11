@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Practice – EVALUX</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header Styles */
+    .header {
+      background: rgba(26, 34, 53, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(54, 243, 226, 0.2);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-brand {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #36f3e2 0%, #3a8fff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .timer {
+      background: rgba(54, 243, 226, 0.1);
+      border: 2px solid rgba(54, 243, 226, 0.3);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #36f3e2;
+      min-width: 80px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .timer.warning {
+      color: #ffa500;
+      border-color: rgba(255, 165, 0, 0.5);
+      background: rgba(255, 165, 0, 0.1);
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    .timer.danger {
+      color: #ff4757;
+      border-color: rgba(255, 71, 87, 0.5);
+      background: rgba(255, 71, 87, 0.1);
+      animation: pulse 0.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .btn-secondary, .btn-danger {
+      padding: 0.6rem 1.2rem;
+      border: 2px solid;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #36f3e2;
+      border-color: #36f3e2;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(54, 243, 226, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(54, 243, 226, 0.3);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: #ff4757;
+      border-color: #ff4757;
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 71, 87, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      padding: 2rem 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .interview-container {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(26, 34, 53, 0.6);
+      border: 1px solid rgba(54, 243, 226, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 200px);
+      min-height: 500px;
+      overflow: hidden;
+    }
+
+    /* Interview Header */
+    .interview-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(54, 243, 226, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .interview-header h2 {
+      font-size: 1.5rem;
+      color: #36f3e2;
+      margin-bottom: 0.8rem;
+      text-align: center;
+    }
+
+    .interview-info {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .info-badge {
+      background: rgba(54, 243, 226, 0.1);
+      border: 1px solid rgba(54, 243, 226, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: #e2e8f0;
+    }
+
+    .info-badge strong {
+      color: #36f3e2;
+      margin-right: 0.3rem;
+    }
+
+    /* Chat Box */
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: rgba(10, 14, 39, 0.3);
+      scroll-behavior: smooth;
+    }
+
+    .chat-box::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .chat-box::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+      background: rgba(54, 243, 226, 0.3);
+      border-radius: 4px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb:hover {
+      background: rgba(54, 243, 226, 0.5);
+    }
+
+    /* Messages */
+    .message {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 75%;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .message.ai, .message.assistant {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .message-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.7;
+      padding: 0 0.5rem;
+    }
+
+    .message.user .message-label {
+      color: #3a8fff;
+    }
+
+    .message.ai .message-label, .message.assistant .message-label {
+      color: #36f3e2;
+    }
+
+    .message-content {
+      background: rgba(26, 34, 53, 0.8);
+      padding: 1rem 1.2rem;
+      border-radius: 16px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      word-wrap: break-word;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .message.user .message-content {
+      background: linear-gradient(135deg, rgba(58, 143, 255, 0.2) 0%, rgba(54, 243, 226, 0.1) 100%);
+      border: 1px solid rgba(58, 143, 255, 0.3);
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.ai .message-content, .message.assistant .message-content {
+      background: linear-gradient(135deg, rgba(54, 243, 226, 0.1) 0%, rgba(58, 143, 255, 0.05) 100%);
+      border: 1px solid rgba(54, 243, 226, 0.3);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #8892b0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .empty-state p {
+      font-size: 1.1rem;
+      color: #36f3e2;
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.2rem;
+      background: rgba(54, 243, 226, 0.1);
+      border: 1px solid rgba(54, 243, 226, 0.3);
+      border-radius: 16px;
+      margin: 0 1.5rem 1rem 1.5rem;
+      max-width: fit-content;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .typing-indicator.active {
+      display: flex;
+    }
+
+    .typing-indicator span {
+      color: #36f3e2;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .typing-dots span {
+      width: 6px;
+      height: 6px;
+      background: #36f3e2;
+      border-radius: 50%;
+      animation: bounce 1.4s ease-in-out infinite;
+    }
+
+    .typing-dots span:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-8px); }
+    }
+
+    /* Input Area */
+    .input-area {
+      padding: 1.5rem;
+      border-top: 1px solid rgba(54, 243, 226, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 0.9rem 1.2rem;
+      background: rgba(26, 34, 53, 0.8);
+      border: 2px solid rgba(54, 243, 226, 0.3);
+      border-radius: 12px;
+      color: #e2e8f0;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      resize: none;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #36f3e2;
+      background: rgba(26, 34, 53, 0.95);
+      box-shadow: 0 0 0 3px rgba(54, 243, 226, 0.1);
+    }
+
+    .chat-input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .chat-input::placeholder {
+      color: #6b7280;
+    }
+
+    .send-btn {
+      padding: 0.9rem 2rem;
+      background: linear-gradient(135deg, #36f3e2 0%, #3a8fff 100%);
+      color: #0a0e27;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(54, 243, 226, 0.4);
+    }
+
+    .send-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal {
+      background: linear-gradient(135deg, #1a2235 0%, #2a3550 100%);
+      border: 2px solid rgba(54, 243, 226, 0.3);
+      border-radius: 20px;
+      padding: 2.5rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      animation: modalSlideIn 0.4s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-icon {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      color: #36f3e2;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-message {
+      text-align: center;
+      color: #ccd6f6;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .modal-btn {
+      padding: 0.8rem 1.8rem;
+      border: 2px solid;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .modal-btn-primary {
+      background: linear-gradient(135deg, #36f3e2 0%, #3a8fff 100%);
+      color: #0a0e27;
+      border-color: transparent;
+    }
+
+    .modal-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(54, 243, 226, 0.4);
+    }
+
+    .modal-btn-secondary {
+      background: transparent;
+      color: #36f3e2;
+      border-color: #36f3e2;
+    }
+
+    .modal-btn-secondary:hover {
+      background: rgba(54, 243, 226, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Footer */
+    .footer {
+      background: rgba(26, 34, 53, 0.95);
+      border-top: 1px solid rgba(54, 243, 226, 0.2);
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #36f3e2;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer p {
+      color: #8892b0;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header {
+        padding: 0.8rem 1rem;
+      }
+
+      .nav-brand {
+        font-size: 1.4rem;
+      }
+
+      .header-actions {
+        gap: 0.5rem;
+      }
+
+      .timer {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.8rem;
+        min-width: 70px;
+      }
+
+      .btn-secondary, .btn-danger {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      main {
+        padding: 1rem 0.5rem;
+      }
+
+      .interview-container {
+        height: calc(100vh - 180px);
+        border-radius: 12px;
+      }
+
+      .interview-header {
+        padding: 1rem;
+      }
+
+      .interview-header h2 {
+        font-size: 1.2rem;
+      }
+
+      .chat-box {
+        padding: 1rem;
+      }
+
+      .message {
+        max-width: 85%;
+      }
+
+      .message-content {
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+      }
+
+      .input-area {
+        padding: 1rem;
+        flex-direction: column;
+      }
+
+      .send-btn {
+        width: 100%;
+        padding: 0.8rem;
+      }
+
+      .modal {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+      }
+
+      .modal-message {
+        font-size: 1rem;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .modal-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .interview-info {
+        font-size: 0.85rem;
+      }
+
+      .info-badge {
+        padding: 0.4rem 0.8rem;
+      }
+
+      .empty-state-icon {
+        font-size: 3rem;
+      }
+
+      .empty-state p {
+        font-size: 1rem;
+      }
+    }
+
+    /* Custom Animations */
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="nav-brand">EVALUX</div>
+      <div class="header-actions">
+        <div id="timer" class="timer">15:00</div>
+        <a href="dashboard.html" class="btn-secondary">Dashboard</a>
+        <button id="endInterviewBtn" class="btn-danger">End Interview</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="interview-container">
+      <div class="interview-header">
+        <h2>AI Interview Practice</h2>
+        <div class="interview-info">
+          <div class="info-badge">
+            <strong id="questionCount">Question 0</strong>
+          </div>
+          <div class="info-badge" id="cvStatus">
+            <strong>Mode:</strong> <span id="modeText">General</span>
+          </div>
+        </div>
+      </div>
+      
+      <div id="chatBox" class="chat-box">
+        <div class="empty-state">
+          <div class="empty-state-icon">💬</div>
+          <p>Starting interview session...</p>
+        </div>
+      </div>
+      
+      <div class="typing-indicator" id="typingIndicator">
+        <span>AI is thinking</span>
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      
+      <div class="input-area">
+        <input 
+          type="text" 
+          id="chatInput" 
+          class="chat-input" 
+          placeholder="Type your answer here..."
+          disabled
+        />
+        <button id="sendBtn" class="send-btn" disabled>Send</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Custom Modal -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-icon" id="modalIcon">🎯</div>
+        <h3 class="modal-title" id="modalTitle">Modal Title</h3>
+      </div>
+      <p class="modal-message" id="modalMessage">Modal message</p>
+      <div class="modal-actions" id="modalActions">
+        <!-- Buttons will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <span class="footer-logo">EVALUX</span>
+      <p>&copy; 2025 EVALUX. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Global state
+    let sessionId = null;
+    let questionCounter = 0;
+    let timeLeft = 15 * 60; // 15 minutes in seconds
+    let timerInterval = null;
+    let hasCVUploaded = false;
+
+    // DOM elements
+    const chatBox = document.getElementById('chatBox');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const endInterviewBtn = document.getElementById('endInterviewBtn');
+    const timerEl = document.getElementById('timer');
+    const questionCountEl = document.getElementById('questionCount');
+    const modeTextEl = document.getElementById('modeText');
+
+    // Check if CV was uploaded
+    function checkCVStatus() {
+      const cvData = localStorage.getItem('cv_analysis_data');
+      const urlParams = new URLSearchParams(window.location.search);
+      const isCvBased = urlParams.get('cv_based') === 'true';
+      
+      if (cvData && isCvBased) {
+        hasCVUploaded = true;
+        modeTextEl.textContent = 'CV-Based';
+        modeTextEl.style.color = '#36f3e2';
+        return true;
+      }
+      
+      hasCVUploaded = false;
+      modeTextEl.textContent = 'General';
+      return false;
+    }
+
+    // Timer functions
+    function startTimer() {
+      if (timerInterval) return;
+      
+      timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+          timeLeft--;
+          updateTimerDisplay();
+          
+          // Warning at 5 minutes
+          if (timeLeft === 5 * 60) {
+            timerEl.classList.add('warning');
+            showModal('⏰', 'Time Warning', '5 minutes remaining!', [{
+              text: 'Continue',
+              primary: true,
+              action: () => closeModal()
+            }]);
+          }
+          
+          // Danger at 2 minutes
+          if (timeLeft === 2 * 60) {
+            timerEl.classList.remove('warning');
+            timerEl.classList.add('danger');
+          }
+        } else {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          endInterviewByTimeout();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function endInterviewByTimeout() {
+      showModal('⏰', 'Time\'s Up!', 'Your interview session has ended. Let\'s see your results.', [{
+        text: 'View Results',
+        primary: true,
+        action: () => endInterview()
+      }]);
+    }
+
+    // Modal functions
+    function showModal(icon, title, message, buttons = []) {
+      const modalOverlay = document.getElementById('modalOverlay');
+      const modalIcon = document.getElementById('modalIcon');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalMessage = document.getElementById('modalMessage');
+      const modalActions = document.getElementById('modalActions');
+      
+      modalIcon.textContent = icon;
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+      
+      // Clear and add buttons
+      modalActions.innerHTML = '';
+      buttons.forEach(btn => {
+        const button = document.createElement('button');
+        button.className = `modal-btn ${btn.primary ? 'modal-btn-primary' : 'modal-btn-secondary'}`;
+        button.textContent = btn.text;
+        button.onclick = btn.action;
+        modalActions.appendChild(button);
+      });
+      
+      modalOverlay.classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    // Chat functions
+    function appendMessage(role, text) {
+      // Remove empty state if exists
+      const emptyState = chatBox.querySelector('.empty-state');
+      if (emptyState) {
+        emptyState.remove();
+      }
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${role}`;
+      
+      const label = document.createElement('div');
+      label.className = 'message-label';
+      label.textContent = role === 'user' ? 'You' : 'AI Interviewer';
+      
+      const content = document.createElement('div');
+      content.className = 'message-content';
+      content.textContent = text;
+      
+      msgDiv.appendChild(label);
+      msgDiv.appendChild(content);
+      
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      
+      if (role === 'assistant' || role === 'ai') {
+        questionCounter++;
+        questionCountEl.textContent = `Question ${questionCounter}`;
+      }
+    }
+
+    // Send message function
+    async function sendMessage() {
+      const message = chatInput.value.trim();
+      
+      if (!message || !sessionId) return;
+
+      // Check for very short answers
+      if (message.split(' ').length < 3) {
+        showModal('💡', 'Tip', 'Try to provide more detailed answers. Interviewers appreciate thorough explanations!', [{
+          text: 'Got it',
+          primary: true,
+          action: () => closeModal()
+        }]);
+        return;
+      }
+
+      // Disable input
+      chatInput.disabled = true;
+      sendBtn.disabled = true;
+
+      // Show user message
+      appendMessage('user', message);
+      chatInput.value = '';
+
+      // Show typing indicator with realistic delay
+      typingIndicator.classList.add('active');
+
+      try {
+        const token = localStorage.getItem('evalux_token');
+        
+        // Add realistic typing delay (1-2 seconds)
+        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+        
+        const response = await fetch('http://127.0.0.1:8000/api/interview/message', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: message,
+            session_id: sessionId,
+            context: {
+              question_number: questionCounter,
+              has_cv: hasCVUploaded,
+              time_remaining: timeLeft
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to send message');
+        }
+
+        const data = await response.json();
+        
+        // Hide typing indicator
+        typingIndicator.classList.remove('active');
+
+        // Show AI response with natural formatting
+        let aiResponse = data.reply || data.response || 'Could you elaborate on that?';
+        
+        // Clean up AI response
+        aiResponse = aiResponse
+          .replace(/\*\*/g, '') // Remove markdown bold
+          .replace(/\*/g, '')   // Remove markdown italic
+          .trim();
+
+        appendMessage('ai', aiResponse);
+
+        // Provide feedback on answer quality
+        if (data.feedback) {
+          setTimeout(() => {
+            showAnswerFeedback(data.feedback);
+          }, 500);
+        }
+
+      } catch (error) {
+        console.error('Message send failed:', error);
+        typingIndicator.classList.remove('active');
+        appendMessage('ai', 'I apologize for the technical difficulty. Could you please rephrase your answer?');
+      } finally {
+        // Re-enable input
+        chatInput.disabled = false;
+        sendBtn.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    // Show subtle feedback on answer quality
+    function showAnswerFeedback(feedback) {
+      if (!feedback || !feedback.score) return;
+      
+      const score = feedback.score;
+      let emoji = '👍';
+      let message = 'Good answer!';
+      
+      if (score >= 8) {
+        emoji = '🌟';
+        message = 'Excellent answer! Very thorough.';
+      } else if (score >= 6) {
+        emoji = '👍';
+        message = 'Good answer! Consider adding more details.';
+      } else if (score >= 4) {
+        emoji = '💭';
+        message = 'Decent answer. Try to be more specific.';
+      } else {
+        emoji = '💡';
+        message = 'Could use more detail. Think about real examples.';
+      }
+      
+      // Show subtle notification (non-blocking)
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: rgba(54, 243, 226, 0.1);
+        border: 1px solid rgba(54, 243, 226, 0.3);
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: #36f3e2;
+        font-size: 0.9rem;
+        z-index: 999;
+        animation: slideInRight 0.3s ease-out;
+      `;
+      notification.textContent = `${emoji} ${message}`;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Initialize interview
+    async function initializeInterview() {
+      const token = localStorage.getItem('evalux_token');
+      
+      if (!token) {
+        showModal('🔒', 'Login Required', 'Please login to start the interview.', [{
+          text: 'Go to Login',
+          primary: true,
+          action: () => window.location.href = 'profile.html'
+        }]);
+        return;
+      }
+
+      // Check CV status
+      checkCVStatus();
+
+      // Get CV skills if available
+      let cvSkills = [];
+      let experienceLevel = 'intermediate';
+      
+      if (hasCVUploaded) {
+        const cvData = localStorage.getItem('cv_analysis_data');
+        if (cvData) {
+          try {
+            const parsed = JSON.parse(cvData);
+            cvSkills = parsed.skills || [];
+            experienceLevel = parsed.experience_level || 'intermediate';
+          } catch (e) {
+            console.error('Failed to parse CV data:', e);
+          }
+        }
+      }
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/interview/start', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            topic: 'Software Development',
+            cv_skills: cvSkills,
+            experience_level: experienceLevel,
+            interview_type: hasCVUploaded ? 'cv_based' : 'general',
+            preferences: {
+              style: 'conversational',
+              depth: 'detailed',
+              follow_up: true
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to start interview');
+        }
+
+        const data = await response.json();
+        
+        sessionId = data.session_id;
+        
+        // Show welcome message with context
+        let welcomeMsg = data.message || "Hello! I'm your AI interviewer. ";
+        
+        if (hasCVUploaded && cvSkills.length > 0) {
+          welcomeMsg += `I've reviewed your CV and noticed your experience with ${cvSkills.slice(0, 3).join(', ')}. `;
+        }
+        
+        // Add first question to welcome message
+        welcomeMsg += data.first_question || "Let's start with your background. Can you tell me about your experience?";
+        
+        // Show single combined message
+        appendMessage('ai', welcomeMsg);
+        
+        // Enable input immediately
+        chatInput.disabled = false;
+        sendBtn.disabled = false;
+        chatInput.focus();
+        
+        // Start timer
+        startTimer();
+
+      } catch (error) {
+        console.error('Failed to start interview:', error);
+        showModal('❌', 'Error', 'Could not start interview. Please try again.', [{
+          text: 'Retry',
+          primary: true,
+          action: () => {
+            closeModal();
+            initializeInterview();
+          }
+        }, {
+          text: 'Go Back',
+          primary: false,
+          action: () => window.location.href = 'dashboard.html'
+        }]);
+      }
+    }
+
+    // End interview
+    async function endInterview() {
+      if (!sessionId) {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('evalux_token');
+        
+        const response = await fetch(`http://127.0.0.1:8000/api/interview/end/${sessionId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to end interview');
+        }
+
+        const result = await response.json();
+        const rating = result.rating || {};
+        
+        // Show detailed results modal
+        showDetailedResults(rating);
+
+      } catch (error) {
+        console.error('End interview failed:', error);
+        showModal('❌', 'Error', 'Failed to save interview results. Redirecting to dashboard...', [{
+          text: 'OK',
+          primary: true,
+          action: () => window.location.href = 'dashboard.html'
+        }]);
+      }
+    }
+
+    // Show detailed results with strengths, weaknesses, and tips
+    function showDetailedResults(rating) {
+      const score = rating.score || 'N/A';
+      const strengths = rating.strengths || ['Completed the interview', 'Engaged with questions'];
+      const weaknesses = rating.weaknesses || ['Keep practicing to improve'];
+      const tips = rating.tips || ['Practice common interview questions', 'Prepare specific examples from your experience'];
+      
+      // Create custom detailed modal
+      const modalOverlay = document.getElementById('modalOverlay');
+      const modal = modalOverlay.querySelector('.modal');
+      
+      // Custom HTML for results
+      modal.innerHTML = `
+        <div class="modal-header">
+          <div class="modal-icon" style="font-size: 5rem;">🎉</div>
+          <h3 class="modal-title">Interview Complete!</h3>
+        </div>
+        
+        <div style="text-align: center; margin: 1.5rem 0;">
+          <div style="display: inline-block; background: linear-gradient(135deg, #36f3e2, #3a8fff); padding: 1rem 2rem; border-radius: 12px; font-size: 2rem; font-weight: 700; color: #0f1724;">
+            ${score}/10
+          </div>
+        </div>
+        
+        <div style="text-align: left; margin: 1.5rem 0; max-height: 300px; overflow-y: auto;">
+          <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.5rem;">✅</span>
+              <strong style="color: #36f3e2; font-size: 1.1rem;">Strengths</strong>
+            </div>
+            <ul style="margin-left: 2.5rem; color: #9fb3d8; line-height: 1.8;">
+              ${strengths.map(s => `<li>${s}</li>`).join('')}
+            </ul>
+          </div>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.5rem;">⚠️</span>
+              <strong style="color: #ffd700; font-size: 1.1rem;">Areas to Improve</strong>
+            </div>
+            <ul style="margin-left: 2.5rem; color: #9fb3d8; line-height: 1.8;">
+              ${weaknesses.map(w => `<li>${w}</li>`).join('')}
+            </ul>
+          </div>
+          
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="font-size: 1.5rem;">💡</span>
+              <strong style="color: #3a8fff; font-size: 1.1rem;">Tips for Next Time</strong>
+            </div>
+            <ul style="margin-left: 2.5rem; color: #9fb3d8; line-height: 1.8;">
+              ${tips.map(t => `<li>${t}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
+          <button onclick="window.location.href='progress.html'" class="modal-btn modal-btn-primary">
+            View Progress
+          </button>
+          <button onclick="window.location.href='dashboard.html'" class="modal-btn modal-btn-secondary">
+            Dashboard
+          </button>
+        </div>
+      `;
+      
+      modalOverlay.classList.add('active');
+    }
+
+    // Event listeners
+    sendBtn.addEventListener('click', sendMessage);
+
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    endInterviewBtn.addEventListener('click', () => {
+      showModal('🤔', 'End Interview?', 'Are you sure you want to end this interview session?', [{
+        text: 'Yes, End Interview',
+        primary: true,
+        action: () => {
+          closeModal();
+          endInterview();
+        }
+      }, {
+        text: 'Continue',
+        primary: false,
+        action: () => closeModal()
+      }]);
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target.id === 'modalOverlay') {
+        closeModal();
+      }
+    });
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', initializeInterview);
+  </script>
+</body>
+</html>

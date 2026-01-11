@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile — EVALUX</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+  <body class="dark">
+  <header class="header">
+    <div class="container">
+      <div class="nav-brand">
+  <span class="brand-text"><b>EVALUX</b></span>
+      </div>
+      <nav class="nav-menu" style="display:flex; gap:1rem;">
+        <a href="index.html" class="btn btn-secondary">Home</a>
+        <a href="dashboard.html" class="btn btn-secondary">Guest</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <div class="container auth-container" style="max-width: 500px; margin: 4rem auto;">
+      <div class="auth-card" style="box-shadow: var(--shadow-sm); background: var(--surface); border-radius: var(--radius-md); padding: 2.5rem 2rem; background: #1a2235; color: #e2e8f0;">
+        <h1 class="auth-header" style="text-align:center; margin-bottom:2rem;">Profile</h1>
+  <div id="profileInfo" class="profile-info" style="margin-bottom:2rem; text-align:center;"></div>
+  <div id="authMessage" style="margin-bottom:1rem; text-align:center; color:#36f3e2;"></div>
+        <div class="tab-switcher" style="display:flex; justify-content:center; gap:1rem; margin-bottom:2rem;">
+          <button id="showLoginTab" class="tab-btn btn btn-success" style="min-width:120px;">Login</button>
+          <button id="showRegisterTab" class="tab-btn btn btn-secondary" style="min-width:120px;">Register</button>
+        </div>
+        <form id="loginForm" class="auth-form" style="margin-bottom:2rem; display:block;">
+          <h2 style="margin-bottom:1rem;">Login</h2>
+          <div class="form-group">
+            <input type="email" id="loginEmail" name="email" placeholder="Email" required style="margin-bottom: 1rem; width: 100%; padding: 0.75rem;" />
+          </div>
+          <div class="form-group" style="position:relative;">
+            <input type="password" id="loginPassword" name="password" placeholder="Password" required style="margin-bottom: 1rem; width: 100%; padding: 0.75rem; padding-right:3.8rem;" />
+            <button type="button" class="password-toggle" data-target="loginPassword" aria-label="Show password" style="position:absolute; right:0.5rem; top:50%; transform:translateY(-50%); background:transparent; border:none; color:#36f3e2; font-weight:600; cursor:pointer;">Show</button>
+          </div>
+          <button type="submit" class="btn btn-success full-width" style="width: 100%;">Sign In</button>
+        </form>
+        <form id="registerForm" class="auth-form" style="display:none;">
+          <h2 style="margin-bottom:1rem;">Register</h2>
+          <div class="form-group">
+            <input type="text" id="regUsername" name="username" placeholder="Username" required style="margin-bottom: 1rem; width: 100%; padding: 0.75rem;" />
+          </div>
+          <div class="form-group">
+            <input type="email" id="regEmail" name="email" placeholder="Email" required style="margin-bottom: 1rem; width: 100%; padding: 0.75rem;" />
+          </div>
+          <div class="form-group" style="position:relative;">
+            <input type="password" id="regPassword" name="password" placeholder="Password" required style="margin-bottom: 1rem; width: 100%; padding: 0.75rem; padding-right:3.8rem;" />
+            <button type="button" class="password-toggle" data-target="regPassword" aria-label="Show password" style="position:absolute; right:0.5rem; top:50%; transform:translateY(-50%); background:transparent; border:none; color:#36f3e2; font-weight:600; cursor:pointer;">Show</button>
+          </div>
+          <div class="form-group">
+            <label for="regInterestsChips">Topics you're interested in</label>
+            <div id="regInterestsChips" class="interests-chips-group" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem;">
+              <button type="button" class="interest-chip" data-value="Web Dev">Web Dev</button>
+              <button type="button" class="interest-chip" data-value="Data Structures">Data Structures</button>
+              <button type="button" class="interest-chip" data-value="Algorithms">Algorithms</button>
+              <button type="button" class="interest-chip" data-value="OOP">OOP</button>
+              <button type="button" class="interest-chip" data-value="Databases">Databases</button>
+              <button type="button" class="interest-chip" data-value="Machine Learning">Machine Learning</button>
+              <button type="button" class="interest-chip" data-value="System Design">System Design</button>
+              <button type="button" class="interest-chip" data-value="Networking">Networking</button>
+            </div>
+            <input type="hidden" id="regInterests" name="interests" />
+            <small class="muted">Click to select. Selected topics will be highlighted.</small>
+          </div>
+          <button type="submit" class="btn btn-success full-width" style="width: 100%;">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </main>
+  <footer class="app-footer">
+    <div class="container footer-container">
+  <span class="footer-logo">EVALUX</span>
+      <p class="footer-tagline">PREP. SPEAK. PEAK.</p>
+    </div>
+    <div class="footer-bottom"><small>&copy; 2025 EVALUX. All rights reserved.</small></div>
+  </footer>
+  <script>
+    // Store token and interests in localStorage
+    function saveToken(token) {
+      localStorage.setItem('evalux_token', token);
+    }
+    function getToken() {
+      return localStorage.getItem('evalux_token');
+    }
+    function clearToken() {
+      localStorage.removeItem('evalux_token');
+      localStorage.removeItem('evalux_interests');
+    }
+    function saveInterests(interests) {
+      localStorage.setItem('evalux_interests', JSON.stringify(interests));
+    }
+    function getInterests() {
+      const raw = localStorage.getItem('evalux_interests');
+      return raw ? JSON.parse(raw) : [];
+    }
+    // Show profile info
+    async function loadProfile() {
+      const token = getToken();
+      const infoDiv = document.getElementById('profileInfo');
+      if (!token) {
+        infoDiv.innerHTML = '<p>Please login or register.</p>';
+        return;
+      }
+      try {
+        const res = await fetch('http://127.0.0.1:8000/me', {
+          method: 'GET',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (res.ok && data.username) {
+          infoDiv.innerHTML = '';
+        } else {
+          infoDiv.innerHTML = '<p>Session expired. Please login again.</p>';
+          clearToken();
+        }
+      } catch (err) {
+        infoDiv.innerHTML = '<p>Could not load profile.</p>';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab/slider logic
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const showLoginTab = document.getElementById('showLoginTab');
+      const showRegisterTab = document.getElementById('showRegisterTab');
+      if (showLoginTab) {
+        showLoginTab.addEventListener('click', function() {
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+        showLoginTab.classList.add('btn-success');
+        showRegisterTab.classList.remove('btn-success');
+        showRegisterTab.classList.add('btn-secondary');
+        });
+      }
+      if (showRegisterTab) {
+        showRegisterTab.addEventListener('click', function() {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        showRegisterTab.classList.add('btn-success');
+        showLoginTab.classList.remove('btn-success');
+        showLoginTab.classList.add('btn-secondary');
+        });
+      }
+      // Interests chips selection
+      const chips = document.querySelectorAll('.interest-chip');
+      chips.forEach(chip => {
+        chip.addEventListener('click', function() {
+          chip.classList.toggle('selected');
+          updateInterestsInput();
+        });
+      });
+      function updateInterestsInput() {
+        const selected = Array.from(document.querySelectorAll('.interest-chip.selected')).map(b => b.dataset.value);
+        document.getElementById('regInterests').value = selected.join(',');
+      }
+      loadProfile();
+      // Login
+loginForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  console.log('Login form submitted'); // DEBUG
+  
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const msgBox = document.getElementById('authMessage');
+  
+  console.log('Email:', email); // DEBUG
+  console.log('Password length:', password.length); // DEBUG
+  
+  msgBox.textContent = '';
+  
+  if (!email || !password) {
+    msgBox.style.color = '#ff6b6b';
+    msgBox.textContent = 'Please enter email and password';
+    return;
+  }
+  
+  try {
+    msgBox.style.color = '#36f3e2';
+    msgBox.textContent = 'Logging in...';
+    
+    const formData = new URLSearchParams();
+    formData.append('username', email);
+    formData.append('password', password);
+    
+    console.log('Sending login request...'); // DEBUG
+    
+    const res = await fetch('http://127.0.0.1:8000/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
+    });
+    
+    console.log('Response status:', res.status); // DEBUG
+    
+    const data = await res.json();
+    console.log('Response data:', data); // DEBUG
+    
+    if (res.ok && data.access_token) {
+      localStorage.setItem('evalux_token', data.access_token);
+      msgBox.style.color = '#36f3e2';
+      msgBox.textContent = 'Login successful! Redirecting...';
+      
+      setTimeout(() => { 
+        window.location.href = 'dashboard.html'; 
+      }, 1000);
+    } else {
+      msgBox.style.color = '#ff6b6b';
+      msgBox.textContent = data.detail || data.message || 'Login failed';
+    }
+  } catch (err) {
+    console.error('Login error:', err); // DEBUG
+    msgBox.style.color = '#ff6b6b';
+    msgBox.textContent = 'Server error: ' + err.message;
+  }
+});
+      // Register
+      registerForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const username = document.getElementById('regUsername').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const interests = document.getElementById('regInterests').value.split(',').filter(x => x);
+        const msgBox = document.getElementById('authMessage');
+        msgBox.textContent = '';
+        // Require at least one interest
+        if (interests.length === 0) {
+          msgBox.style.color = '#ff4c4c';
+          msgBox.textContent = 'Please select at least one interest.';
+          return;
+        }
+        // Require username to be at least 3 characters
+        if (username.length < 3) {
+          msgBox.style.color = '#ff4c4c';
+          msgBox.textContent = 'Username must be at least 3 characters.';
+          document.getElementById('regUsername').style.borderColor = '#ff4c4c';
+          return;
+        } else {
+          document.getElementById('regUsername').style.borderColor = '';
+        }
+        // Strict email validation
+        // 1. Starts with a letter
+        if (!/^[a-zA-Z]/.test(email)) {
+          msgBox.style.color = '#ff4c4c';
+          msgBox.textContent = 'Email must start with a letter.';
+          document.getElementById('regEmail').style.borderColor = '#ff4c4c';
+          return;
+        }
+        // 2. Only letters, numbers, @, and . allowed
+        if (!/^[a-zA-Z][a-zA-Z0-9@.]*$/.test(email)) {
+          msgBox.style.color = '#ff4c4c';
+          msgBox.textContent = 'Email can only contain letters, numbers, @ and .';
+          document.getElementById('regEmail').style.borderColor = '#ff4c4c';
+          return;
+        }
+        // 3. Must be valid email format
+        if (!/^[a-zA-Z][a-zA-Z0-9.]*@[a-zA-Z0-9.]+\.[a-zA-Z]{2,}$/.test(email)) {
+          msgBox.style.color = '#ff4c4c';
+          msgBox.textContent = 'Please enter a valid email address.';
+          document.getElementById('regEmail').style.borderColor = '#ff4c4c';
+          return;
+        }
+        document.getElementById('regEmail').style.borderColor = '';
+        // If valid, proceed with registration
+        try {
+          const res = await fetch('http://127.0.0.1:8000/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password, interests })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            saveInterests(interests);
+            msgBox.style.color = '#36f3e2';
+            msgBox.textContent = 'Registration successful! Redirecting to OTP verification...';
+            setTimeout(() => {
+              window.location.href = `verify.html?email=${encodeURIComponent(email)}`;
+            }, 1000);
+          } else {
+            msgBox.style.color = '#ff6b6b';
+            msgBox.textContent = data.detail || data.message || 'Registration failed';
+          }
+        } catch (err) {
+          msgBox.style.color = '#ff6b6b';
+          msgBox.textContent = 'Server error during registration';
+        }
+      });
+      // Logout
+      const logoutBtnEl = document.getElementById('logoutBtn');
+      if (logoutBtnEl) {
+        logoutBtnEl.addEventListener('click', function() {
+          clearToken();
+          const msgBox = document.getElementById('authMessage');
+          msgBox.style.color = '#36f3e2';
+          msgBox.textContent = 'Logged out!';
+          loadProfile();
+        });
+      }
+
+      // Password show/hide toggles - attach only if toggles exist
+      const toggleButtons = document.querySelectorAll('.password-toggle');
+      if (toggleButtons && toggleButtons.length > 0) {
+        toggleButtons.forEach(btn => {
+          if (!btn) return;
+          btn.addEventListener('click', function() {
+            const targetId = btn.dataset.target;
+            const input = document.getElementById(targetId);
+            if (!input) return;
+            if (input.type === 'password') {
+              input.type = 'text';
+              btn.textContent = 'Hide';
+              btn.setAttribute('aria-label', 'Hide password');
+            } else {
+              input.type = 'password';
+              btn.textContent = 'Show';
+              btn.setAttribute('aria-label', 'Show password');
+            }
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

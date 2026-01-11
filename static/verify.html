@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTP Verification — EVALUX</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .otp-container {
+      max-width: 400px;
+      margin: 4rem auto;
+      background: #1a2235;
+      color: #e2e8f0;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(54,243,226,0.08);
+      padding: 2.5rem 2rem;
+    }
+    .otp-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #36f3e2;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; margin-bottom: 0.5rem; }
+    input[type="email"], input[type="text"] {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: 1px solid #232a45;
+      background: #181f36;
+      color: #e2e8f0;
+      font-size: 1rem;
+    }
+    .btn { width: 100%; margin-top: 1rem; }
+    .resend-link { color: #36f3e2; cursor: pointer; text-decoration: underline; display: block; text-align: center; margin-top: 1rem; }
+    .message { text-align: center; margin-top: 1rem; font-size: 1rem; }
+  </style>
+</head>
+<body class="dark">
+  <header class="header">
+    <div class="container">
+  <div class="nav-brand"><a href="index.html" style="text-decoration:none;color:inherit;"><span class="brand-text"><b>EVALUX</b></span></a></div>
+    </div>
+  </header>
+  <main>
+    <div class="otp-container">
+      <button id="backToLoginBtn" class="btn btn-secondary" style="width:100%;margin-bottom:1.2rem;">Back to Login</button>
+      <div id="otpTimer" style="text-align:center; margin-bottom:1rem; color:#36f3e2; font-size:1.1rem;"></div>
+      <div class="otp-header">OTP Verification</div>
+      <form id="otpForm">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div class="form-group">
+          <label for="otp">Enter OTP</label>
+          <input type="text" id="otp" name="otp" maxlength="6" required />
+        </div>
+        <button type="submit" class="btn btn-success">Verify OTP</button>
+      </form>
+      <span class="resend-link" id="resendOtp">Resend OTP</span>
+      <div class="message" id="otpMessage"></div>
+    </div>
+  </main>
+  <footer class="app-footer">
+    <div class="container footer-container">
+  <a href="index.html" style="text-decoration:none;color:inherit;"><span class="footer-logo">EVALUX</span></a>
+    </div>
+    <div class="footer-bottom"><small>&copy; 2025 EVALUX. All rights reserved.</small></div>
+  </footer>
+  <script>
+    // Back button logic
+    document.getElementById('backToLoginBtn').addEventListener('click', function() {
+      window.location.href = 'profile.html';
+    });
+    // Redirect from register to OTP page and restore registration details
+    let regDetails = {};
+    if (window.location.search.includes('email=')) {
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get('email');
+      if (email) document.getElementById('email').value = email;
+      // Try to restore registration details from localStorage
+      const regRaw = localStorage.getItem('pending_registration');
+      if (regRaw) {
+        try { regDetails = JSON.parse(regRaw); } catch {}
+      }
+    }
+
+    // OTP timer logic
+    let timeLeft = 60;
+    const timerDiv = document.getElementById('otpTimer');
+    function updateTimer() {
+      timerDiv.textContent = `Time left: ${timeLeft}s`;
+      if (timeLeft <= 0) {
+        timerDiv.textContent = 'Session expired. Redirecting to sign up...';
+        // Save registration details to localStorage for profile.html
+        if (regDetails && regDetails.email) {
+          localStorage.setItem('pending_registration', JSON.stringify(regDetails));
+        }
+        setTimeout(() => {
+          window.location.href = 'profile.html?restore=1';
+        }, 1200);
+      }
+    }
+    updateTimer();
+    const timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimer();
+      if (timeLeft <= 0) clearInterval(timerInterval);
+    }, 1000);
+
+    document.getElementById('otpForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const otp = document.getElementById('otp').value.trim();
+      const msgBox = document.getElementById('otpMessage');
+      msgBox.textContent = '';
+      msgBox.style.color = '#36f3e2';
+      try {
+        const res = await fetch('http://localhost:8000/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msgBox.textContent = 'OTP verified! Redirecting to login...';
+          setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
+        } else {
+          msgBox.textContent = data.detail || 'Invalid OTP.';
+          msgBox.style.color = '#ff4c4c';
+        }
+      } catch (err) {
+        msgBox.textContent = 'Error verifying OTP.';
+        msgBox.style.color = '#ff4c4c';
+      }
+    });
+
+    // Replace the resendOtp click handler with this:
+document.getElementById('resendOtp').addEventListener('click', async function() {
+  const email = document.getElementById('email').value.trim();
+  const msgBox = document.getElementById('otpMessage');
+  msgBox.textContent = '';
+  
+  if (!email) {
+    msgBox.textContent = 'Enter your email to resend OTP.';
+    msgBox.style.color = '#ff4c4c';
+    return;
+  }
+  
+  try {
+    const res = await fetch('http://localhost:8000/resend-otp?email=' + email, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    const data = await res.json();
+    
+    if (res.ok) {
+      msgBox.textContent = 'OTP resent to your email.';
+      msgBox.style.color = '#36f3e2';
+      // Reset timer
+      timeLeft = 60;
+    } else {
+      msgBox.textContent = data.detail || 'Error resending OTP.';
+      msgBox.style.color = '#ff4c4c';
+    }
+  } catch (err) {
+    msgBox.textContent = 'Error resending OTP.';
+    msgBox.style.color = '#ff4c4c';
+  }
+});
+    
+  </script>
+</body>
+</html>
